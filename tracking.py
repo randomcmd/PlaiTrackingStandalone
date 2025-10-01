@@ -5,7 +5,7 @@ from prettytable import PrettyTable
 import sys
 import os
 
-from new_cd import new_cd
+from model_context import model_context
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'alltracker'))
 
@@ -27,12 +27,8 @@ def run_tracking_model(video_path: str, tiny = True) -> None:
         window_len=window_len
     )
 
-    with new_cd('alltracker'):
-        # To aovid having to fork the dependencies or removing the print statements I redirect stdout to stderr for this
-        stdout = sys.stdout
-        sys.stdout = sys.stderr
+    with model_context(working_directory='alltracker'):
         run(model, args)
-        sys.stdout = stdout
 
 class Args:
     def __init__(self, video_path, window_len):
