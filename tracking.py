@@ -6,7 +6,6 @@ from nets.alltracker import Net
 
 from alltracker.demo import count_parameters
 
-
 def run_tracking_model(video_path: str, tiny = True) -> None:
     if tiny:
         model = Net(args.window_len, use_basicencoder=True, no_split=True)
