@@ -1,5 +1,3 @@
-from struct import Struct
-
 import torch
 import cv2
 import numpy as np
@@ -13,7 +11,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'alltracker'))
 
 from alltracker.nets.alltracker import Net
 
-from alltracker.demo import count_parameters, run
+from alltracker_demo_modified import count_parameters, run
 
 def run_tracking_model(video_path: str, tiny = True) -> None:
     torch.set_grad_enabled(False)
