@@ -1,6 +1,6 @@
-[submodule "Depth-Anything-V2"]
-	path = Depth-Anything-V2
-	url = https://github.com/DepthAnything/Depth-Anything-V2
 [submodule "alltracker"]
 	path = alltracker
 	url = https://github.com/aharley/alltracker
+[submodule "Video-Depth-Anything"]
+	path = Video-Depth-Anything
+	url = https://github.com/DepthAnything/Video-Depth-Anything
