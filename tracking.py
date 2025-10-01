@@ -24,15 +24,18 @@ def run_tracking_model(video_path: str, tiny = True) -> None:
         model = Net(window_len)
 
     count_parameters(model)
-    args = Args(window_len)
+    args = Args(
+        video_path=video_path,
+        window_len=window_len
+    )
 
     with new_cd('alltracker'):
         run(model, args)
 
 class Args:
-    def __init__(self, window_len):
+    def __init__(self, video_path, window_len):
             self.ckpt_init = ''
-            self.mp4_path = 'example_comfy.mp4'
+            self.mp4_path = os.path.join('..', video_path)
             self.query_frame = 0
             self.image_size = 1024
             self.max_frames = 400
