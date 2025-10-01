@@ -187,7 +187,7 @@ def forward_video(rgbs, framerate, model, args):
         '/usr/bin/ffmpeg -y -hide_banner -loglevel error -f image2 -framerate %d -pattern_type glob -i "./%s/*.jpg" -c:v libx264 -crf 20 -pix_fmt yuv420p %s' % (
             framerate, temp_dir, rgb_out_f))
 
-    return None
+    return xy0
 
 
 def run(model, args):

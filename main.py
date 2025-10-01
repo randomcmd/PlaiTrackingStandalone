@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 
 from depth import run_depth_model
@@ -18,7 +19,7 @@ def main():
     print(f'Ran program with args: {args.video=} {args.x=} {args.y=}', file=sys.stderr)
 
     run_depth_model()
-    run_tracking_model(video_path=args.video)
+    run_tracking_model(video_path=os.path.abspath(args.video))
 
     sys.stdout.write("[[0, 0, 0]]")
 
