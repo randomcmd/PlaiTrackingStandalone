@@ -19,7 +19,7 @@ def main():
     print(f'Ran program with args: {args.video=} {args.x=} {args.y=}', file=sys.stderr)
 
     run_depth_model()
-    run_tracking_model()
+    run_tracking_model(video_path=args.video)
 
     sys.stdout.write("[[0, 0, 0]]")
 
