@@ -28,7 +28,11 @@ def run_tracking_model(video_path: str, tiny = True) -> None:
     )
 
     with new_cd('alltracker'):
+        # To aovid having to fork the dependencies or removing the print statements I redirect stdout to stderr for this
+        stdout = sys.stdout
+        sys.stdout = sys.stderr
         run(model, args)
+        sys.stdout = stdout
 
 class Args:
     def __init__(self, video_path, window_len):

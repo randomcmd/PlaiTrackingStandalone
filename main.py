@@ -4,7 +4,6 @@ import sys
 from depth import run_depth_model
 from tracking import run_tracking_model
 
-
 def main():
     parser = argparse.ArgumentParser(
         prog='tracking',

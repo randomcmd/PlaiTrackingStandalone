@@ -191,10 +191,6 @@ def forward_video(rgbs, framerate, model, args):
 
 
 def run(model, args):
-    log_dir = './logs_demo'
-
-    global_step = 0
-
     if args.ckpt_init:
         _ = alltracker.utils.saveload.load(
             None,
