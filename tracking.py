@@ -1,9 +1,4 @@
-import math
-
 import torch
-import cv2
-import numpy as np
-from prettytable import PrettyTable
 import sys
 import os
 
@@ -50,19 +45,14 @@ class Args:
             self.hstack = False
             self.tiny = True
 
-def extract_closest_trajectory(xy: torch.Tensor, x: int, y: int) -> torch.Tensor:
-    target = [x, y]
-    xy0 = xy[0]
+def extract_closest_trajectory(tracking: torch.Tensor, x: int, y: int) -> torch.Tensor:
+    if tracking.ndim != 3 or tracking.shape[2] != 2:
+        raise ValueError(f'tracking must have shape (T, N, 2), got {tracking.shape}')
 
-    def squared_distance(this, other):
-        return (other[0] - this[0]) ** 2 + (other[1] - this[1]) ** 2
+    xy0 = tracking[0]
+    target = torch.tensor([x, y], dtype=xy0.dtype, device=xy0.device)
 
-    distance = math.inf
-    optimal_tracker_index = -1
+    distance_squared = ((xy0 - target) ** 2).sum(dim=1)
+    best_tracker_index = torch.argmin(distance_squared).item()
 
-    for i, tracker in enumerate(xy0):
-        if squared_distance(target, tracker) < distance:
-            distance = squared_distance(target, tracker)
-            optimal_tracker_index = i
-
-    return xy[optimal_tracker_index]
+    return tracking[best_tracker_index]
