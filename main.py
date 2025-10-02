@@ -22,6 +22,7 @@ def main():
     run_tracking_model(video_path=os.path.abspath(args.video))
 
     sys.stdout.write("[[0, 0, 0]]")
+    sys.stdout.newline()
 
 if __name__ == '__main__':
     main()

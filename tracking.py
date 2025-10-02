@@ -28,8 +28,8 @@ def run_tracking_model(video_path: str, tiny = True) -> None:
     )
 
     with model_context(working_directory='alltracker'):
-        xy0 = run(model, args)
-        print(f'{xy0=}', file=sys.stderr)
+        xy = run(model, args)
+        print(f'{xy=}', file=sys.stderr)
 
 class Args:
     def __init__(self, video_path, window_len):

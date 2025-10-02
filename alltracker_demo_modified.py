@@ -153,6 +153,7 @@ def forward_video(rgbs, framerate, model, args):
     visconfs_e = visconf_maps_e[:, :, :, ::rate, ::rate].reshape(B, T, 2, -1).permute(0, 1, 3, 2)  # B,T,N,2
 
     xy0 = trajs_e[0, 0].cpu().numpy()
+    xy = trajs_e[0].cpu().numpy()
     colors = alltracker.utils.improc.get_2d_colors(xy0, H, W)
 
     fn = args.mp4_path.split('/')[-1].split('.')[0]
@@ -187,7 +188,7 @@ def forward_video(rgbs, framerate, model, args):
         '/usr/bin/ffmpeg -y -hide_banner -loglevel error -f image2 -framerate %d -pattern_type glob -i "./%s/*.jpg" -c:v libx264 -crf 20 -pix_fmt yuv420p %s' % (
             framerate, temp_dir, rgb_out_f))
 
-    return xy0
+    return xy
 
 
 def run(model, args):
@@ -237,6 +238,6 @@ def run(model, args):
     print('rgbs', rgbs.shape)
 
     with torch.no_grad():
-        xy0 = forward_video(rgbs, framerate, model, args)
+        xy = forward_video(rgbs, framerate, model, args)
 
-    return xy0
+    return xy
