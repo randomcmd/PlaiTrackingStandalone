@@ -37,7 +37,7 @@ def main():
 
     visualize(args.video, data, 'debug.mp4')
 
-    sys.stdout.write(json.dumps(data.data))
+    sys.stdout.write(json.dumps(data.data.tolist()))
 
 def apply_depth_data_to_tracking_data(tracking: torch.Tensor, depths: torch.Tensor) -> torch.Tensor:
     B, N, = tracking.shape
