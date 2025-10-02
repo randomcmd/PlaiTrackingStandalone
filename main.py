@@ -44,32 +44,22 @@ def apply_depth_data_to_tracking_data(tracking: torch.Tensor, depths: torch.Tens
     B, N, = tracking.shape
     _, H, W = depths.shape
 
-    depth_tensor = torch.from_numpy(depths)  # shares memory, zero‑copy
-    depth_tensor = depth_tensor.float()  # grid_sample needs floating point
-    depth_tensor = depth_tensor.to(tracking.device)
+    # 1. Make depth a (B,1,H,W) tensor
+    depth = torch.from_numpy(depths).float().to(tracking.device)  # (B,H,W)
+    depth = depth.unsqueeze(1)  # (B,1,H,W)
 
-    # -------------------------------------------------
-    # 1) Normalise to [-1, 1] (remember width ↔ x, height ↔ y)
+    # 2. Normalise and reshape the grid to (B,1,1,2)
     grid = tracking.clone().float()
-    grid[..., 0] = (grid[..., 0] / (W - 1)) * 2 - 1  # x
-    grid[..., 1] = (grid[..., 1] / (H - 1)) * 2 - 1  # y
+    grid[..., 0] = (grid[..., 0] / (depth.shape[3] - 1)) * 2 - 1  # x
+    grid[..., 1] = (grid[..., 1] / (depth.shape[2] - 1)) * 2 - 1  # y
+    grid = grid.view(depth.shape[0], 1, 1, 2)  # (B,1,1,2)
 
-    # -------------------------------------------------
-    # 2) Reshape to (B, N, 1, 2) – treat N points as a “column”
-    grid = grid.unsqueeze(2)  # now (B, N, 1, 2)
-
-    # -------------------------------------------------
-    # 3) Sample depth values
+    # 3. Sample
     sampled = torch.nn.functional.grid_sample(
-        depth_tensor, grid,
-        mode='bilinear',
-        padding_mode='border',
-        align_corners=True,
-    )  # → (B, 1, N, 1)
+        depth, grid,
+        mode='bilinear', padding_mode='border', align_corners=True)
 
-    # -------------------------------------------------
-    # 4) Remove the singleton dimensions
-    depth_at_points = sampled.squeeze(1).squeeze(-1)  # (B, N)
+    depth_at_points = sampled.squeeze()  # (B,)
 
     return depth_at_points
 
