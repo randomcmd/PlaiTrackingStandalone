@@ -48,21 +48,3 @@ def run(args):
     save_video(depths, depth_vis_path, fps=fps, is_depths=True, grayscale=args.grayscale)
 
     return depths
-
-    if args.metric:
-        import open3d as o3d
-
-        width, height = depths[0].shape[-1], depths[0].shape[-2]
-        x, y = np.meshgrid(np.arange(width), np.arange(height))
-        x = (x - width / 2) / args.focal_length_x
-        y = (y - height / 2) / args.focal_length_y
-
-        for i, (color_image, depth) in enumerate(zip(frames, depths)):
-            z = np.array(depth)
-            points = np.stack((np.multiply(x, z), np.multiply(y, z), z), axis=-1).reshape(-1, 3)
-            colors = np.array(color_image).reshape(-1, 3) / 255.0
-
-            pcd = o3d.geometry.PointCloud()
-            pcd.points = o3d.utility.Vector3dVector(points)
-            pcd.colors = o3d.utility.Vector3dVector(colors)
-            o3d.io.write_point_cloud(os.path.join(args.output_dir, 'point' + str(i).zfill(4) + '.ply'), pcd)
