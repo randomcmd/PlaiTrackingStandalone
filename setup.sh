@@ -10,7 +10,7 @@ cd alltracker || (echo "\"alltracker\" directory not found. Did you forget to cl
 bash ./download_reference_model.sh
 cd ..
 
-cd VideoDepthAnything  || (echo "\"Depth-Anything-V2\" directory not found. Did you forget to clone recursively?"; exit)
+cd VideoDepthAnything  || (echo "\"VideoDepthAnything\" directory not found. Did you forget to clone recursively?"; exit)
 # pip install -r requirements.txt
 bash ./get_weights.sh
 cd checkpoints
