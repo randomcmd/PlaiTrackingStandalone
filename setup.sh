@@ -3,12 +3,14 @@ set -e
 # Okay im not saying this is good but it works for now
 pip install torch torchvision torchaudio xformers numpy --upgrade
 
+apt-get install ffmpeg
+
 cd alltracker || (echo "\"alltracker\" directory not found. Did you forget to clone recursively?"; exit)
 pip install -r requirements.txt
 bash ./download_reference_model.sh
 cd ..
 
-cd Video-Depth-Anything  || (echo "\"Depth-Anything-V2\" directory not found. Did you forget to clone recursively?"; exit)
+cd VideoDepthAnything  || (echo "\"Depth-Anything-V2\" directory not found. Did you forget to clone recursively?"; exit)
 pip install -r requirements.txt
 bash ./get_weights.sh
 cd checkpoints
