@@ -21,7 +21,7 @@ def main():
 
     depths = run_depth_model()
     tracking = run_tracking_model(video_path=os.path.abspath(args.video))
-    target_trajectory = extract_closest_trajectory(tracking, int(args.x), (args.y))
+    target_trajectory = extract_closest_trajectory(tracking, args.x, args.y)
     print(f'{target_trajectory=}', file=sys.stderr)
 
     sys.stdout.write("[[0, 0, 0]]\n")
