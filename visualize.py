@@ -6,7 +6,7 @@ def visualize(video_path: str, data: torch.Tensor, output_path: str):
     source = cv2.VideoCapture(video_path)
     fps = source.get(cv2.CAP_PROP_FPS)
     resolution = [int(source.get(cv2.CAP_PROP_FRAME_WIDTH)), int(source.get(cv2.CAP_PROP_FRAME_HEIGHT))]
-    output = cv2.VideoWriter(output_path, -1, fps, resolution)
+    output = cv2.VideoWriter(output_path, 0x000C, fps, resolution)
 
     while True:
         ret, frame = source.read()
