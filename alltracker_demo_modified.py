@@ -237,6 +237,6 @@ def run(model, args):
     print('rgbs', rgbs.shape)
 
     with torch.no_grad():
-        metrics = forward_video(rgbs, framerate, model, args)
+        xy0 = forward_video(rgbs, framerate, model, args)
 
-    return None
+    return xy0
