@@ -153,7 +153,7 @@ def forward_video(rgbs, framerate, model, args):
     visconfs_e = visconf_maps_e[:, :, :, ::rate, ::rate].reshape(B, T, 2, -1).permute(0, 1, 3, 2)  # B,T,N,2
 
     xy0 = trajs_e[0, 0].cpu().numpy()
-    xy = trajs_e[0].cpu().numpy()
+    xy = trajs_e[0].cpu()
     colors = alltracker.utils.improc.get_2d_colors(xy0, H, W)
 
     fn = args.mp4_path.split('/')[-1].split('.')[0]
