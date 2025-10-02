@@ -15,7 +15,7 @@ def visualize(video_path: str, data: torch.Tensor, output_path: str):
             break
 
         tracking_xy = data[i, 0:2].int().tolist()
-        tracking_depth = data[i, 0:2].int().item()
+        tracking_depth = data[i, 2].int().item()
         frame = cv2.circle(frame, tracking_xy, tracking_depth, color=(255, 0, 0), thickness=2)
 
         output.write(frame)
