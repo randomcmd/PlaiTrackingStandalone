@@ -19,10 +19,11 @@ def main():
 
     print(f'Ran program with args: {args.video=} {args.x=} {args.y=}', file=sys.stderr)
 
-    depths = run_depth_model()
-
+    # TODO: Depth model and tracking model could be running in parallel
     tracking = run_tracking_model(video_path=os.path.abspath(args.video))
     target_trajectory = extract_closest_trajectory(tracking, args.x, args.y)
+
+    depths = run_depth_model()
 
     print(f'{target_trajectory=}', file=sys.stderr)
 

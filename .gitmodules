@@ -2,5 +2,5 @@
 	path = alltracker
 	url = https://github.com/aharley/alltracker
 [submodule "Video-Depth-Anything"]
-	path = Video-Depth-Anything
+	path = VideoDepthAnything
 	url = https://github.com/DepthAnything/Video-Depth-Anything
