@@ -1,4 +1,8 @@
 set -e
+
+# Okay im not saying this is good but it works for now
+pip install torch torchvision torchaudio xformers numpy --upgrade
+
 cd alltracker || (echo "\"alltracker\" directory not found. Did you forget to clone recursively?"; exit)
 pip install -r requirements.txt
 bash ./download_reference_model.sh

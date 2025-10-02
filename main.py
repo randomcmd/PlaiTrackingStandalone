@@ -26,6 +26,7 @@ def main():
     depths = run_depth_model()
 
     print(f'{target_trajectory=}', file=sys.stderr)
+    print(f'{depths=}', file=sys.stderr)
 
     sys.stdout.write("[[0, 0, 0]]\n")
 
