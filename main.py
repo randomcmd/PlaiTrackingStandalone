@@ -24,7 +24,8 @@ def main():
     tracking = run_tracking_model(video_path=os.path.abspath(args.video))
     target_trajectory = extract_closest_trajectory(tracking, args.x, args.y)
 
-    depths = run_depth_model(video_path=os.path.abspath(args.video))
+    depths_raw = run_depth_model(video_path=os.path.abspath(args.video))
+    depths = torch.from_numpy(depths_raw).to(target_trajectory.device)
 
     print(f'{target_trajectory=}', file=sys.stderr)
     print(f'{depths=}', file=sys.stderr)
@@ -35,32 +36,17 @@ def main():
     sys.stdout.write("[[0, 0, 0]]\n")
 
 def apply_depth_data_to_tracking_data(tracking: torch.Tensor, depths: torch.Tensor) -> torch.Tensor:
-    """
-        target_trajectory : (B, N, 2)   – pixel coordinates (x, y) of N points per frame
-        depths           : (B, 1, H, W) – depth map for each frame
-        Returns:
-            depth_at_points : (B, N)   – depth value for each trajectory point
-        """
     B, N, = tracking.shape
-    _, H, W = depths.shape
-
-    # 1. Make depth a (B,1,H,W) tensor
-    depth = torch.from_numpy(depths).float().to(tracking.device)  # (B,H,W)
-    depth = depth.unsqueeze(1)  # (B,1,H,W)
-
-    # 2. Normalise and reshape the grid to (B,1,1,2)
-    grid = tracking.clone().float()
-    grid[..., 0] = (grid[..., 0] / (depth.shape[3] - 1)) * 2 - 1  # x
-    grid[..., 1] = (grid[..., 1] / (depth.shape[2] - 1)) * 2 - 1  # y
-    grid = grid.view(depth.shape[0], 1, 1, 2)  # (B,1,1,2)
-
-    # 3. Sample
-    sampled = torch.nn.functional.grid_sample(
-        depth, grid,
-        mode='bilinear', padding_mode='border', align_corners=True)
-
-    depth_at_points = sampled.squeeze()  # (B,)
-
+    F, H, W = depths.shape
+    depth_at_points = torch.stack([
+        tracking[:, 0].long().clamp(0, W - 1).float(),
+        tracking[:, 1].long().clamp(0, H - 1).float(),
+        depths[
+            torch.arange(F, device=tracking.device),  # frame indices
+            tracking[:, 1].long().clamp(0, H - 1),  # y
+            tracking[:, 0].long().clamp(0, W - 1)  # x
+        ]
+    ], dim=1)  # → (F, 3) on GPU
     return depth_at_points
 
 if __name__ == '__main__':
