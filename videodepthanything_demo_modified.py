@@ -93,7 +93,7 @@ class Args:
         self.max_res=1280
         self.encoder = 'vitl'
         self.max_len=-1
-        self.target_fps=-1,
+        self.target_fps=-1
         self.metric = False
         self.fp32 = False
         self.grayscale = False
