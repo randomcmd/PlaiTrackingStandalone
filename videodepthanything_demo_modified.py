@@ -12,9 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import argparse
+import sys
+
 import numpy as np
 import os
 import torch
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'VideoDepthAnything'))
 
 from VideoDepthAnything.video_depth_anything.video_depth import VideoDepthAnything
 from VideoDepthAnything.utils.dc_utils import read_video_frames, save_video
