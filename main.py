@@ -44,6 +44,10 @@ def apply_depth_data_to_tracking_data(tracking: torch.Tensor, depths: torch.Tens
     B, N, = tracking.shape
     _, H, W = depths.shape
 
+    depth_tensor = torch.from_numpy(depths)  # shares memory, zero‑copy
+    depth_tensor = depth_tensor.float()  # grid_sample needs floating point
+    depth_tensor = depth_tensor.to(tracking.device)
+
     # -------------------------------------------------
     # 1) Normalise to [-1, 1] (remember width ↔ x, height ↔ y)
     grid = tracking.clone().float()
@@ -57,7 +61,7 @@ def apply_depth_data_to_tracking_data(tracking: torch.Tensor, depths: torch.Tens
     # -------------------------------------------------
     # 3) Sample depth values
     sampled = torch.nn.functional.grid_sample(
-        depths, grid,
+        depth_tensor, grid,
         mode='bilinear',
         padding_mode='border',
         align_corners=True,
