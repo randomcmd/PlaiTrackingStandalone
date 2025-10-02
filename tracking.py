@@ -1,3 +1,5 @@
+import math
+
 import torch
 import cv2
 import numpy as np
@@ -13,7 +15,7 @@ from alltracker.nets.alltracker import Net
 
 from alltracker_demo_modified import count_parameters, run
 
-def run_tracking_model(video_path: str, tiny = True) -> None:
+def run_tracking_model(video_path: str, tiny = True) -> torch.Tensor:
     torch.set_grad_enabled(False)
     window_len = 16
     if tiny:
@@ -29,7 +31,8 @@ def run_tracking_model(video_path: str, tiny = True) -> None:
 
     with model_context(working_directory='alltracker'):
         xy = run(model, args)
-        print(f'{xy=}', file=sys.stderr)
+
+    return xy
 
 class Args:
     def __init__(self, video_path, window_len):
@@ -46,3 +49,20 @@ class Args:
             self.vstack = False
             self.hstack = False
             self.tiny = True
+
+def extract_closest_trajectory(xy: torch.Tensor, x: int, y: int) -> torch.Tensor:
+    target = [x, y]
+    xy0 = xy[0]
+
+    def squared_distance(this, other):
+        return (other[0] - this[0]) ** 2 + (other[1] - this[1]) ** 2
+
+    distance = math.inf
+    optimal_tracker_index = -1
+
+    for i, tracker in enumerate(xy0):
+        if squared_distance(target, tracker) < distance:
+            distance = squared_distance(target, tracker)
+            optimal_tracker_index = i
+
+    return xy[optimal_tracker_index]
