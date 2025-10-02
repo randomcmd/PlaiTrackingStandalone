@@ -40,7 +40,7 @@ class Args:
         self.mp4_path = video_path
         self.query_frame = 0
         self.image_size = 1024
-        self.max_frames = math.inf
+        self.max_frames = 9999
         self.inference_iters = 4
         self.window_len = window_len
         self.rate = 2
