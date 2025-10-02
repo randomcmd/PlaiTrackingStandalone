@@ -1,3 +1,5 @@
+import math
+
 import torch
 import sys
 import os
@@ -22,6 +24,7 @@ def run_tracking_model(video_path: str, tiny=True) -> torch.Tensor:
     count_parameters(model)
     args = Args(
         video_path=video_path,
+        tiny=tiny,
         window_len=window_len
     )
 
@@ -32,12 +35,12 @@ def run_tracking_model(video_path: str, tiny=True) -> torch.Tensor:
 
 
 class Args:
-    def __init__(self, video_path, window_len):
+    def __init__(self, video_path, tiny, window_len):
         self.ckpt_init = ''
         self.mp4_path = video_path
         self.query_frame = 0
         self.image_size = 1024
-        self.max_frames = 400
+        self.max_frames = math.inf
         self.inference_iters = 4
         self.window_len = window_len
         self.rate = 2
@@ -45,7 +48,7 @@ class Args:
         self.bkg_opacity = 0.5
         self.vstack = False
         self.hstack = False
-        self.tiny = True
+        self.tiny = tiny
 
 
 def extract_closest_trajectory(tracking: torch.Tensor, x: int, y: int) -> torch.Tensor:
