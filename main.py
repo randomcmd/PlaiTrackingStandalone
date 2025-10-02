@@ -42,7 +42,7 @@ def apply_depth_data_to_tracking_data(tracking: torch.Tensor, depths: torch.Tens
             depth_at_points : (B, N)   – depth value for each trajectory point
         """
     B, N, = tracking.shape
-    _, _, H, W = depths.shape
+    _, H, W = depths.shape
 
     # -------------------------------------------------
     # 1) Normalise to [-1, 1] (remember width ↔ x, height ↔ y)
