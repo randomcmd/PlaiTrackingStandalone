@@ -154,39 +154,40 @@ def forward_video(rgbs, framerate, model, args) -> torch.Tensor:
 
     xy0 = trajs_e[0, 0].cpu().numpy()
     xy = trajs_e[0]
-    colors = alltracker.utils.improc.get_2d_colors(xy0, H, W)
+    if args.debug_output:
+        colors = alltracker.utils.improc.get_2d_colors(xy0, H, W)
 
-    fn = args.mp4_path.split('/')[-1].split('.')[0]
-    rgb_out_f = './pt_vis_%s_rate%d_q%d.mp4' % (fn, rate, args.query_frame)
-    print('rgb_out_f', rgb_out_f)
-    temp_dir = 'temp_pt_vis_%s_rate%d_q%d' % (fn, rate, args.query_frame)
-    alltracker.utils.basic.mkdir(temp_dir)
-    vis = []
+        fn = args.mp4_path.split('/')[-1].split('.')[0]
+        rgb_out_f = './pt_vis_%s_rate%d_q%d.mp4' % (fn, rate, args.query_frame)
+        print('rgb_out_f', rgb_out_f)
+        temp_dir = 'temp_pt_vis_%s_rate%d_q%d' % (fn, rate, args.query_frame)
+        alltracker.utils.basic.mkdir(temp_dir)
+        vis = []
 
-    frames = draw_pts_gpu(rgbs[0].to('cuda:0'), trajs_e[0], visconfs_e[0, :, :, 1] > args.conf_thr,
-                          colors, rate=rate, bkg_opacity=args.bkg_opacity)
-    print('frames', frames.shape)
+        frames = draw_pts_gpu(rgbs[0].to('cuda:0'), trajs_e[0], visconfs_e[0, :, :, 1] > args.conf_thr,
+                              colors, rate=rate, bkg_opacity=args.bkg_opacity)
+        print('frames', frames.shape)
 
-    if args.vstack:
-        frames_top = rgbs[0].clamp(0, 255).byte().permute(0, 2, 3, 1).cpu().numpy()  # T,H,W,3
-        frames = np.concatenate([frames_top, frames], axis=1)
-    elif args.hstack:
-        frames_left = rgbs[0].clamp(0, 255).byte().permute(0, 2, 3, 1).cpu().numpy()  # T,H,W,3
-        frames = np.concatenate([frames_left, frames], axis=2)
+        if args.vstack:
+            frames_top = rgbs[0].clamp(0, 255).byte().permute(0, 2, 3, 1).cpu().numpy()  # T,H,W,3
+            frames = np.concatenate([frames_top, frames], axis=1)
+        elif args.hstack:
+            frames_left = rgbs[0].clamp(0, 255).byte().permute(0, 2, 3, 1).cpu().numpy()  # T,H,W,3
+            frames = np.concatenate([frames_left, frames], axis=2)
 
-    print('writing frames to disk')
-    f_start_time = time.time()
-    for ti in range(T):
-        temp_out_f = '%s/%03d.jpg' % (temp_dir, ti)
-        im = PIL.Image.fromarray(frames[ti])
-        im.save(temp_out_f)  # , "PNG", subsampling=0, quality=80)
-    ftime = time.time() - f_start_time
-    print('finished writing; %.2f seconds / %d frames; %d fps' % (ftime, T, round(T / ftime)))
+        print('writing frames to disk')
+        f_start_time = time.time()
+        for ti in range(T):
+            temp_out_f = '%s/%03d.jpg' % (temp_dir, ti)
+            im = PIL.Image.fromarray(frames[ti])
+            im.save(temp_out_f)  # , "PNG", subsampling=0, quality=80)
+        ftime = time.time() - f_start_time
+        print('finished writing; %.2f seconds / %d frames; %d fps' % (ftime, T, round(T / ftime)))
 
-    print('writing mp4')
-    os.system(
-        '/usr/bin/ffmpeg -y -hide_banner -loglevel error -f image2 -framerate %d -pattern_type glob -i "./%s/*.jpg" -c:v libx264 -crf 20 -pix_fmt yuv420p %s' % (
-            framerate, temp_dir, rgb_out_f))
+        print('writing mp4')
+        os.system(
+            '/usr/bin/ffmpeg -y -hide_banner -loglevel error -f image2 -framerate %d -pattern_type glob -i "./%s/*.jpg" -c:v libx264 -crf 20 -pix_fmt yuv420p %s' % (
+                framerate, temp_dir, rgb_out_f))
 
     return xy
 

@@ -13,7 +13,7 @@ from alltracker.nets.alltracker import Net
 from alltracker_demo_modified import count_parameters, run
 
 
-def run_tracking_model(video_path: str, tiny=True) -> torch.Tensor:
+def run_tracking_model(video_path: str, debug_output=False, tiny=True) -> torch.Tensor:
     torch.set_grad_enabled(False)
     window_len = 16
     if tiny:
@@ -25,6 +25,7 @@ def run_tracking_model(video_path: str, tiny=True) -> torch.Tensor:
     args = Args(
         video_path=video_path,
         tiny=tiny,
+        debug_output=debug_output,
         window_len=window_len
     )
 
@@ -35,7 +36,7 @@ def run_tracking_model(video_path: str, tiny=True) -> torch.Tensor:
 
 
 class Args:
-    def __init__(self, video_path, tiny, window_len):
+    def __init__(self, video_path: str, debug_output: bool, tiny: bool, window_len: int):
         self.ckpt_init = ''
         self.mp4_path = video_path
         self.query_frame = 0
@@ -49,6 +50,7 @@ class Args:
         self.vstack = False
         self.hstack = False
         self.tiny = tiny
+        self.debug_output = debug_output
 
 
 def extract_closest_trajectory(tracking: torch.Tensor, x: int, y: int) -> torch.Tensor:

@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'VideoDepthAnything',
 from VideoDepthAnything.video_depth_anything.video_depth import VideoDepthAnything
 from VideoDepthAnything.utils.dc_utils import read_video_frames, save_video
 
-def run(args):
+def run(args, debug_output=False):
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     model_configs = {
@@ -39,12 +39,13 @@ def run(args):
     frames, target_fps = read_video_frames(args.input_video, args.max_len, args.target_fps, args.max_res)
     depths, fps = video_depth_anything.infer_video_depth(frames, target_fps, input_size=args.input_size, device=DEVICE, fp32=args.fp32)
 
-    video_name = os.path.basename(args.input_video)
-    os.makedirs(args.output_dir, exist_ok=True)
+    if debug_output:
+        video_name = os.path.basename(args.input_video)
+        os.makedirs(args.output_dir, exist_ok=True)
 
-    processed_video_path = os.path.join(args.output_dir, os.path.splitext(video_name)[0]+'_src.mp4')
-    depth_vis_path = os.path.join(args.output_dir, os.path.splitext(video_name)[0]+'_vis.mp4')
-    save_video(frames, processed_video_path, fps=fps)
-    save_video(depths, depth_vis_path, fps=fps, is_depths=True, grayscale=args.grayscale)
+        processed_video_path = os.path.join(args.output_dir, os.path.splitext(video_name)[0]+'_src.mp4')
+        depth_vis_path = os.path.join(args.output_dir, os.path.splitext(video_name)[0]+'_vis.mp4')
+        save_video(frames, processed_video_path, fps=fps)
+        save_video(depths, depth_vis_path, fps=fps, is_depths=True, grayscale=args.grayscale)
 
     return depths
