@@ -7,10 +7,14 @@ import torch
 from depth import run_depth_model
 from tracking import run_tracking_model, extract_closest_trajectory
 from visualize import visualize
+from pathlib import Path
 
 
 def main(args):
     print(f'Ran program with args: {args.video=} {args.x=} {args.y=}', file=sys.stderr)
+
+    if args.output:
+        Path(args.output).mkdir(parents=True, exist_ok=True)
 
     # TODO: Depth model and tracking model could be running in parallel
     tracking, tracking_confidence = run_tracking_model(video_path=os.path.abspath(args.video), debug_output=args.output, tiny=False)
