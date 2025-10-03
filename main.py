@@ -18,7 +18,7 @@ def main():
     parser.add_argument('video', help='the video file to track')
     parser.add_argument('x', type=int, help='the x coordinate of the tracking point')
     parser.add_argument('y', type=int, help='the y coordinate of the tracking point')
-    parser.add_argument('debug_output', default=None, help='outputs debug video')
+    parser.add_argument('debug-output', default=None, help='outputs debug video')
     args = parser.parse_args()
 
     print(f'Ran program with args: {args.video=} {args.x=} {args.y=}', file=sys.stderr)
