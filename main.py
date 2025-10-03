@@ -37,7 +37,7 @@ def main():
     print(f'{data=}', file=sys.stderr)
 
     if args.debug_output:
-        visualize(args.video, data, 'debug.mp4')
+        visualize(args.video, data, args.debug_output)
 
     sys.stdout.write(json.dumps(data.data.tolist()))
     sys.stdout.write('\n')
