@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 def main(args):
-    print(f'Ran program with args: {args.video=} {args.x=} {args.y=}', file=sys.stderr)
+    print(f'Ran program with args: {args.video=} {args.x=} {args.y=} {args.output=}', file=sys.stderr)
 
     if args.output:
         Path(args.output).mkdir(parents=True, exist_ok=True)
