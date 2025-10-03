@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 import torch
 
 
@@ -18,12 +19,49 @@ def visualize(video_path: str, data: torch.Tensor, output_path: str):
 
         tracking_xy = data[i, 0:2].int().tolist()
         tracking_depth = data[i, 2].int().item()
+        tracking_depth_previous = data[i-1, 2].int().item() if i > 0 else initial_depth
+
+        radius = 50
+        radius_depth_adjusted = scale_radius(
+            initial_radius=radius,
+            initial_depth=initial_depth,
+            depth=tracking_depth,
+            min_radius=10,
+            smooth_factor=1.0,
+            previous_depth=tracking_depth_previous,
+        )
 
         frame = cv2.circle(frame, tracking_xy, 10, color=(255, 0, 0), thickness=2)
-        frame = cv2.circle(frame, tracking_xy, int(50*tracking_depth/initial_depth), color=(255, 0, 0), thickness=2)
+        frame = cv2.circle(frame, tracking_xy, int(radius_depth_adjusted), color=(255, 0, 0), thickness=2)
 
         output.write(frame)
         i += 1
 
     source.release()
     output.release()
+
+def scale_radius(initial_radius: float,
+                 initial_depth:   float,
+                 depth:    float,
+                 min_radius:   float = 1.0,
+                 smooth_factor: float = 0.0,
+                 previous_depth:   float = None) -> float:
+    # Guard against division by zero (or values that are too close to 0)
+    eps = np.finfo(float).eps
+    depth = max(depth, eps)
+
+    # Optional temporal smoothing – reduces flicker if the depth map is noisy
+    if smooth_factor > 0 and previous_depth is not None:
+        depth = smooth_factor * depth + (1 - smooth_factor) * previous_depth
+
+    # Inverse‑depth scaling factor
+    factor = initial_depth / depth
+
+    # Apply the factor to the original radius
+    new_radius = initial_radius * factor
+
+    # Enforce a minimum size so the circle never disappears
+    new_radius = max(min_radius, new_radius)
+
+    # Return an integer pixel count (most drawing APIs expect int)
+    return int(round(new_radius))
