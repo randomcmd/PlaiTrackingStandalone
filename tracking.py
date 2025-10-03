@@ -44,7 +44,7 @@ class Args:
         self.max_frames = 9999
         self.inference_iters = 4
         self.window_len = window_len
-        self.rate = 10
+        self.rate = 1
         self.conf_thr = 0.1
         self.bkg_opacity = 0.5
         self.vstack = False
