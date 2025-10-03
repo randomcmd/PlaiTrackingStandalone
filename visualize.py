@@ -9,7 +9,7 @@ def visualize(video_path: str, data: torch.Tensor, output_path: str):
     resolution = [int(source.get(cv2.CAP_PROP_FRAME_WIDTH)), int(source.get(cv2.CAP_PROP_FRAME_HEIGHT))]
     output = cv2.VideoWriter(output_path, cv2.VideoWriter.fourcc(*'mp4v'), fps, resolution)
 
-    initial_depth = inv_to_metric(data[0, 2]).int().item()
+    initial_depth = inv_to_metric(data[0, 2]).item()
 
     i = 0
     while True:
@@ -67,6 +67,7 @@ def scale_radius(initial_radius: float,
     # Return an integer pixel count (most drawing APIs expect int)
     return int(round(new_radius))
 
-def inv_to_metric(inv_depth: torch.Tensor, eps: float = 1e-6) -> torch.Tensor:
+def inv_to_metric(inv_depth: torch.Tensor) -> torch.Tensor:
     """Turn inverse‑depth (or disparity) into metric depth."""
+    eps = np.finfo(float).eps
     return 1.0 / (inv_depth.clamp(min=eps))
