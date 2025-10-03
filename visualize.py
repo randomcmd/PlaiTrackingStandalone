@@ -18,8 +18,8 @@ def visualize(video_path: str, data: torch.Tensor, output_path: str):
             break
 
         tracking_xy = data[i, 0:2].int().tolist()
-        tracking_depth = data[i, 2].int().item()
-        tracking_depth_previous = data[i-1, 2].int().item() if i > 0 else initial_depth
+        tracking_depth = inv_to_metric(data[i, 2]).item()
+        tracking_depth_previous = inv_to_metric(data[i-1, 2]).item() if i > 0 else initial_depth
 
         radius = 50
         radius_depth_adjusted = scale_radius(
@@ -65,3 +65,7 @@ def scale_radius(initial_radius: float,
 
     # Return an integer pixel count (most drawing APIs expect int)
     return int(round(new_radius))
+
+def inv_to_metric(inv_depth: torch.Tensor, eps: float = 1e-6) -> torch.Tensor:
+    """Turn inverse‑depth (or disparity) into metric depth."""
+    return 1.0 / (inv_depth.clamp(min=eps))
