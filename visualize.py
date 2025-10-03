@@ -12,7 +12,7 @@ def visualize(video_path: str, data: torch.Tensor, tracking_confidence: torch.Te
     resolution = [int(source.get(cv2.CAP_PROP_FRAME_WIDTH)), int(source.get(cv2.CAP_PROP_FRAME_HEIGHT))]
     output = cv2.VideoWriter(os.path.join(output_path, f'{Path(video_path).stem}_debug.mp4'), cv2.VideoWriter.fourcc(*'mp4v'), fps, resolution)
 
-    initial_depth = inv_to_metric(data[0, 2]).item()
+    initial_depth = data[0, 2].item()
 
     i = 0
     while True:
@@ -21,8 +21,8 @@ def visualize(video_path: str, data: torch.Tensor, tracking_confidence: torch.Te
             break
 
         tracking_xy = data[i, 0:2].int().tolist()
-        tracking_depth = inv_to_metric(data[i, 2]).item()
-        tracking_depth_previous = inv_to_metric(data[i-1, 2]).item() if i > 0 else initial_depth
+        tracking_depth = data[i, 2].item()
+        tracking_depth_previous = data[i-1, 2].item() if i > 0 else initial_depth
 
         radius = 50
         radius_depth_adjusted = scale_radius(
@@ -58,7 +58,7 @@ def scale_radius(initial_radius: float,
         depth = smooth_factor * depth + (1 - smooth_factor) * previous_depth
 
     # Inverse‑depth scaling factor
-    factor = initial_depth / depth
+    factor = depth / initial_depth
 
     # Apply the factor to the original radius
     new_radius = initial_radius * factor
