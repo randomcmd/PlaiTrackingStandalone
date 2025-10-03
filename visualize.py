@@ -31,7 +31,9 @@ def visualize(video_path: str, data: torch.Tensor, output_path: str):
             previous_depth=tracking_depth_previous,
         )
 
-        frame = cv2.circle(frame, tracking_xy, 10, color=(255, 0, 0), thickness=2)
+        print(f'{radius:.2f} -> {radius_depth_adjusted:.2f}')
+
+        frame = cv2.circle(frame, tracking_xy, 10, color=(255, 255, 255), thickness=2)
         frame = cv2.circle(frame, tracking_xy, int(radius_depth_adjusted), color=(255, 0, 0), thickness=2)
 
         output.write(frame)
