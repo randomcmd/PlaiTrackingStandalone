@@ -18,16 +18,16 @@ def main():
     parser.add_argument('video', help='the video file to track')
     parser.add_argument('x', type=int, help='the x coordinate of the tracking point')
     parser.add_argument('y', type=int, help='the y coordinate of the tracking point')
-    parser.add_argument('debug_output', default=None, help='outputs debug video')
+    parser.add_argument('output', default=None, help='outputs debug video')
     args = parser.parse_args()
 
     print(f'Ran program with args: {args.video=} {args.x=} {args.y=}', file=sys.stderr)
 
     # TODO: Depth model and tracking model could be running in parallel
-    tracking = run_tracking_model(video_path=os.path.abspath(args.video), debug_output=args.debug_output is not None)
+    tracking = run_tracking_model(video_path=os.path.abspath(args.video), debug_output=args.output is not None)
     target_trajectory = extract_closest_trajectory(tracking, args.x, args.y)
 
-    depths_raw = run_depth_model(video_path=os.path.abspath(args.video), debug_output=args.debug_output is not None)
+    depths_raw = run_depth_model(video_path=os.path.abspath(args.video), debug_output=args.output is not None)
     depths = torch.from_numpy(depths_raw).to(target_trajectory.device)
 
     print(f'{target_trajectory=}', file=sys.stderr)
@@ -36,8 +36,8 @@ def main():
     data = apply_depth_data_to_tracking_data(target_trajectory, depths)
     print(f'{data=}', file=sys.stderr)
 
-    if args.debug_output:
-        visualize(args.video, data, args.debug_output)
+    if args.output:
+        visualize(args.video, data, args.output)
 
     sys.stdout.write(json.dumps(data.data.tolist()))
     sys.stdout.write('\n')
