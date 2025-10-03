@@ -31,8 +31,6 @@ def visualize(video_path: str, data: torch.Tensor, output_path: str):
             previous_depth=tracking_depth_previous,
         )
 
-        print(f'{radius:.2f} -> {radius_depth_adjusted:.2f}')
-
         frame = cv2.circle(frame, tracking_xy, 10, color=(255, 255, 255), thickness=2)
         frame = cv2.circle(frame, tracking_xy, int(radius_depth_adjusted), color=(255, 0, 0), thickness=2)
 
@@ -46,7 +44,7 @@ def scale_radius(initial_radius: float,
                  initial_depth:   float,
                  depth:    float,
                  min_radius:   float = 1.0,
-                 smooth_factor: float = 0.0,
+                 smooth_factor: float = 0.2,
                  previous_depth:   float = None) -> float:
     # Guard against division by zero (or values that are too close to 0)
     eps = np.finfo(float).eps
