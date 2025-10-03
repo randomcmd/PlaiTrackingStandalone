@@ -35,20 +35,31 @@ def main(args):
     sys.stdout.write(json.dumps(data.data.tolist()))
     sys.stdout.write('\n')
 
+
 def apply_depth_data_to_tracking_data(tracking: torch.Tensor, depths: torch.Tensor) -> torch.Tensor:
-    B, N, = tracking.shape
+    depth_vol = depths.unsqueeze(1)
+
     F, H, W = depths.shape
-    # TODO: Points should be able to go out of frame
-    depth_at_points = torch.stack([
-        tracking[:, 0].long().clamp(0, W - 1).float(),
-        tracking[:, 1].long().clamp(0, H - 1).float(),
-        depths[
-            torch.arange(F, device=tracking.device),  # frame indices
-            tracking[:, 1].long().clamp(0, H - 1),  # y
-            tracking[:, 0].long().clamp(0, W - 1)  # x
-        ]
-    ], dim=1)  # → (F, 3) on GPU
-    return depth_at_points
+    xs = tracking[:, 0].float()  # pixel x   ∈ [0, W‑1]
+    ys = tracking[:, 1].float()  # pixel y   ∈ [0, H‑1]
+
+    xs_norm = 2.0 * (xs + 0.5) / W - 1.0
+    ys_norm = 2.0 * (ys + 0.5) / H - 1.0
+
+    grid = torch.stack([xs_norm, ys_norm], dim=1).view(F, 1, 1, 2)
+
+    sampled = torch.nn.functional.grid_sample(
+        depth_vol,
+        grid,
+        mode='bilinear',
+        padding_mode="zeros",
+    )  # shape (F, 1, 1, 1)
+
+    depth_vals = sampled.squeeze()  # (F)
+
+    # ----- 4️⃣  Assemble final (x, y, depth) tensor -----
+    result = torch.stack([xs, ys, depth_vals], dim=1)  # (F, 3)
+    return result
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
