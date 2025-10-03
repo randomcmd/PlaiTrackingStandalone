@@ -9,7 +9,7 @@ def visualize(video_path: str, data: torch.Tensor, output_path: str):
     resolution = [int(source.get(cv2.CAP_PROP_FRAME_WIDTH)), int(source.get(cv2.CAP_PROP_FRAME_HEIGHT))]
     output = cv2.VideoWriter(output_path, cv2.VideoWriter.fourcc(*'mp4v'), fps, resolution)
 
-    initial_depth = data[0, 2].int().item()
+    initial_depth = inv_to_metric(data[0, 2]).int().item()
 
     i = 0
     while True:
