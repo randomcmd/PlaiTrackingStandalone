@@ -163,6 +163,7 @@ def forward_video(rgbs, framerate, model, args) -> Tuple[torch.Tensor, torch.Ten
 
         fn = args.mp4_path.split('/')[-1].split('.')[0]
         rgb_out_f = os.path.join(args.debug_output, 'pt_vis_%s_rate%d_q%d.mp4' % (fn, rate, args.query_frame))
+        print(f'{rgb_out_f=}')
         print('rgb_out_f', rgb_out_f)
         temp_dir = 'temp_pt_vis_%s_rate%d_q%d' % (fn, rate, args.query_frame)
         alltracker.utils.basic.mkdir(temp_dir)
