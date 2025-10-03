@@ -51,7 +51,7 @@ class Args:
         self.debug_output = debug_output
 
 
-def extract_closest_trajectory(tracking: torch.Tensor, confidence: torch.Tensor, x: int, y: int) -> torch.Tensor:
+def extract_closest_trajectory(tracking: torch.Tensor, x: int, y: int) -> torch.Tensor:
     if tracking.ndim != 3 or tracking.shape[2] != 2:
         raise ValueError(f'tracking must have shape (T, N, 2), got {tracking.shape}')
 
