@@ -10,7 +10,8 @@ def visualize(video_path: str, data: torch.Tensor, tracking_confidence: torch.Te
     source = cv2.VideoCapture(video_path)
     fps = source.get(cv2.CAP_PROP_FPS)
     resolution = [int(source.get(cv2.CAP_PROP_FRAME_WIDTH)), int(source.get(cv2.CAP_PROP_FRAME_HEIGHT))]
-    output = cv2.VideoWriter(os.path.join(output_path, f'{Path(video_path).stem}_debug.mp4'), cv2.VideoWriter.fourcc(*'h264'), fps, resolution)
+    print(f'Writing video to {os.path.join(output_path, f'{Path(video_path).stem}_debug.mp4')}')
+    output = cv2.VideoWriter(os.path.join(output_path, f'{Path(video_path).stem}_debug.mp4'), cv2.VideoWriter.fourcc(*'mp4v'), fps, resolution)
 
     initial_depth = inv_to_metric(data[0, 2]).item()
 
