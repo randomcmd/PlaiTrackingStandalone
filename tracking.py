@@ -24,7 +24,7 @@ def run_tracking_model(video_path: str, debug_output: str=None, tiny=True) -> Tu
     args = Args(
         video_path=video_path,
         tiny=tiny,
-        debug_output=debug_output,
+        debug_output=os.path.join('..', debug_output),  # Since we 'cd' into the model our relative path needs to be adjusted
         window_len=window_len
     )
 

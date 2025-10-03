@@ -1,3 +1,5 @@
+import os
+
 import torch
 
 from model_context import model_context
@@ -7,7 +9,7 @@ def run_depth_model(video_path: str, debug_output: str = None) -> torch.Tensor:
     with model_context('VideoDepthAnything'):
         args = Args(
             video_path=video_path,
-            debug_output=debug_output
+            debug_output=os.path.join('..', debug_output) # Since we 'cd' into the model our relative path needs to be adjusted
         )
         return run(args)
 
