@@ -191,7 +191,7 @@ def forward_video(rgbs, framerate, model, args) -> Tuple[torch.Tensor, torch.Ten
         print('writing mp4')
         os.system(
             '/usr/bin/ffmpeg -y -hide_banner -loglevel error -f image2 -framerate %d -pattern_type glob -i "./%s/*.jpg" -c:v libx264 -crf 20 -pix_fmt yuv420p %s' % (
-                framerate, temp_dir, rgb_out_f))
+                framerate, temp_dir, os.path.abspath(rgb_out_f)))
 
     return xy, visconfs
 
