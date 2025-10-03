@@ -30,7 +30,7 @@ def visualize(video_path: str, data: torch.Tensor, tracking_confidence: torch.Te
             initial_depth=initial_depth,
             depth=tracking_depth,
             min_radius=10,
-            smooth_factor=0.5,
+            smooth_factor=0.0,
             previous_depth=tracking_depth_previous,
         )
 
@@ -47,7 +47,7 @@ def scale_radius(initial_radius: float,
                  initial_depth:   float,
                  depth:    float,
                  min_radius:   float = 1.0,
-                 smooth_factor: float = 0.2,
+                 smooth_factor: float = 0.5,
                  previous_depth:   float = None) -> float:
     # Guard against division by zero (or values that are too close to 0)
     eps = np.finfo(float).eps
