@@ -1,8 +1,7 @@
-import math
-
 import torch
 import sys
 import os
+from typing import Tuple
 
 from model_context import model_context
 
@@ -13,7 +12,7 @@ from alltracker.nets.alltracker import Net
 from alltracker_demo_modified import count_parameters, run
 
 
-def run_tracking_model(video_path: str, debug_output=False, tiny=True) -> torch.Tensor:
+def run_tracking_model(video_path: str, debug_output=False, tiny=True) -> Tuple[torch.Tensor, torch.Tensor]:
     torch.set_grad_enabled(False)
     window_len = 16
     if tiny:
@@ -30,9 +29,9 @@ def run_tracking_model(video_path: str, debug_output=False, tiny=True) -> torch.
     )
 
     with model_context(working_directory='alltracker'):
-        xy = run(model, args)
+        xy, confidence = run(model, args)
 
-    return xy
+    return xy, confidence
 
 
 class Args:
@@ -44,8 +43,8 @@ class Args:
         self.max_frames = 9999
         self.inference_iters = 4
         self.window_len = window_len
-        self.rate = 2
-        self.conf_thr = 0.1
+        self.rate = 20
+        self.conf_thr = 0.5
         self.bkg_opacity = 0.5
         self.vstack = False
         self.hstack = False
@@ -53,7 +52,7 @@ class Args:
         self.debug_output = debug_output
 
 
-def extract_closest_trajectory(tracking: torch.Tensor, x: int, y: int) -> torch.Tensor:
+def extract_closest_trajectory(tracking: torch.Tensor, confidence: torch.Tensor, x: int, y: int) -> torch.Tensor:
     if tracking.ndim != 3 or tracking.shape[2] != 2:
         raise ValueError(f'tracking must have shape (T, N, 2), got {tracking.shape}')
 

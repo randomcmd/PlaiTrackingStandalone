@@ -27,7 +27,7 @@ def visualize(video_path: str, data: torch.Tensor, output_path: str):
             initial_depth=initial_depth,
             depth=tracking_depth,
             min_radius=10,
-            smooth_factor=1.0,
+            smooth_factor=0.5,
             previous_depth=tracking_depth_previous,
         )
 

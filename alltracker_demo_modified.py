@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import torch
 import cv2
 import argparse
@@ -117,7 +119,7 @@ def count_parameters(model):
     return total_params
 
 
-def forward_video(rgbs, framerate, model, args) -> torch.Tensor:
+def forward_video(rgbs, framerate, model, args) -> Tuple[torch.Tensor, torch.Tensor]:
     B, T, C, H, W = rgbs.shape
     assert C == 3
     device = rgbs.device
@@ -154,6 +156,8 @@ def forward_video(rgbs, framerate, model, args) -> torch.Tensor:
 
     xy0 = trajs_e[0, 0].cpu().numpy()
     xy = trajs_e[0]
+    visconfs = visconfs_e[0, 0]
+
     if args.debug_output:
         colors = alltracker.utils.improc.get_2d_colors(xy0, H, W)
 
@@ -189,10 +193,10 @@ def forward_video(rgbs, framerate, model, args) -> torch.Tensor:
             '/usr/bin/ffmpeg -y -hide_banner -loglevel error -f image2 -framerate %d -pattern_type glob -i "./%s/*.jpg" -c:v libx264 -crf 20 -pix_fmt yuv420p %s' % (
                 framerate, temp_dir, rgb_out_f))
 
-    return xy
+    return xy, visconfs
 
 
-def run(model, args) -> torch.Tensor:
+def run(model, args) -> Tuple[torch.Tensor, torch.Tensor]:
     if args.ckpt_init:
         _ = alltracker.utils.saveload.load(
             None,
@@ -239,6 +243,6 @@ def run(model, args) -> torch.Tensor:
     print('rgbs', rgbs.shape)
 
     with torch.no_grad():
-        xy = forward_video(rgbs, framerate, model, args)
+        xy, confidence = forward_video(rgbs, framerate, model, args)
 
-    return xy
+    return xy, confidence
