@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'VideoDepthAnything',
 from VideoDepthAnything.video_depth_anything.video_depth import VideoDepthAnything
 from VideoDepthAnything.utils.dc_utils import read_video_frames, save_video
 
-def run(args, debug_output=False):
+def run(args):
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     model_configs = {
@@ -39,7 +39,7 @@ def run(args, debug_output=False):
     frames, target_fps = read_video_frames(args.input_video, args.max_len, args.target_fps, args.max_res)
     depths, fps = video_depth_anything.infer_video_depth(frames, target_fps, input_size=args.input_size, device=DEVICE, fp32=args.fp32)
 
-    if debug_output:
+    if args.output_dir:
         video_name = os.path.basename(args.input_video)
         os.makedirs(args.output_dir, exist_ok=True)
 
