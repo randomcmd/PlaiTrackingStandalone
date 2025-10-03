@@ -3,7 +3,7 @@ import numpy as np
 import torch
 
 
-def visualize(video_path: str, data: torch.Tensor, output_path: str):
+def visualize(video_path: str, data: torch.Tensor, tracking_confidence: torch.Tensor, output_path: str):
     source = cv2.VideoCapture(video_path)
     fps = source.get(cv2.CAP_PROP_FPS)
     resolution = [int(source.get(cv2.CAP_PROP_FRAME_WIDTH)), int(source.get(cv2.CAP_PROP_FRAME_HEIGHT))]

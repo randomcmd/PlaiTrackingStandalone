@@ -231,7 +231,7 @@ def run(model, args) -> Tuple[torch.Tensor, torch.Tensor]:
     # shorten & shrink the video, in case the gpu is small
     if args.max_frames:
         rgbs = rgbs[:args.max_frames]
-    scale = min(int(args.image_size) / H, int(args.image_size) / W)
+    scale = 1 # min(int(args.image_size) / H, int(args.image_size) / W)
     H, W = int(H * scale), int(W * scale)
     H, W = H // 8 * 8, W // 8 * 8  # make it divisible by 8
     rgbs = [cv2.resize(rgb, dsize=(W, H), interpolation=cv2.INTER_LINEAR) for rgb in rgbs]

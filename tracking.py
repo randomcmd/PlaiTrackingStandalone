@@ -23,6 +23,7 @@ def run_tracking_model(video_path: str, debug_output=False, tiny=True) -> Tuple[
     count_parameters(model)
     args = Args(
         video_path=video_path,
+        max_image_dimension=max
         tiny=tiny,
         debug_output=debug_output,
         window_len=window_len
@@ -39,7 +40,6 @@ class Args:
         self.ckpt_init = ''
         self.mp4_path = video_path
         self.query_frame = 0
-        self.image_size = 1024
         self.max_frames = 9999
         self.inference_iters = 4
         self.window_len = window_len

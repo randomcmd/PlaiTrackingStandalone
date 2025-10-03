@@ -24,20 +24,20 @@ def main():
     print(f'Ran program with args: {args.video=} {args.x=} {args.y=}', file=sys.stderr)
 
     # TODO: Depth model and tracking model could be running in parallel
-    tracking = run_tracking_model(video_path=os.path.abspath(args.video), debug_output=args.output is not None, tiny=False)
+    tracking, tracking_confidence = run_tracking_model(video_path=os.path.abspath(args.video), debug_output=args.output is not None, tiny=False)
     target_trajectory = extract_closest_trajectory(tracking, args.x, args.y)
 
     depths_raw = run_depth_model(video_path=os.path.abspath(args.video), debug_output=args.output is not None)
     depths = torch.from_numpy(depths_raw).to(target_trajectory.device)
 
-    print(f'{target_trajectory=}', file=sys.stderr)
-    print(f'{depths=}', file=sys.stderr)
+    # print(f'{target_trajectory=}', file=sys.stderr)
+    # print(f'{depths=}', file=sys.stderr)
 
     data = apply_depth_data_to_tracking_data(target_trajectory, depths)
-    print(f'{data=}', file=sys.stderr)
+    # print(f'{data=}', file=sys.stderr)
 
     if args.output:
-        visualize(args.video, data, args.output)
+        visualize(args.video, data, tracking_confidence, args.output)
 
     sys.stdout.write(json.dumps(data.data.tolist()))
     sys.stdout.write('\n')
