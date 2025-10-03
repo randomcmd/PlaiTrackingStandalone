@@ -13,10 +13,10 @@ def main(args):
     print(f'Ran program with args: {args.video=} {args.x=} {args.y=}', file=sys.stderr)
 
     # TODO: Depth model and tracking model could be running in parallel
-    tracking, tracking_confidence = run_tracking_model(video_path=os.path.abspath(args.video), debug_output=args.output is not None, tiny=False)
+    tracking, tracking_confidence = run_tracking_model(video_path=os.path.abspath(args.video), debug_output=args.output, tiny=False)
     target_trajectory = extract_closest_trajectory(tracking, args.x, args.y)
 
-    depths_raw = run_depth_model(video_path=os.path.abspath(args.video), debug_output=args.output is not None)
+    depths_raw = run_depth_model(video_path=os.path.abspath(args.video), debug_output=args.output)
     depths = torch.from_numpy(depths_raw).to(target_trajectory.device)
 
     # print(f'{target_trajectory=}', file=sys.stderr)
